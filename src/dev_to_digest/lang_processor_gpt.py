@@ -56,12 +56,19 @@ class LangProcGpt:
     MODEL_NAME = "gpt-4o-mini"
 
     def __init__(
-        self, title: str, contents: str, url: str, tag_list: List[str], api_key: str
+        self,
+        title: str,
+        contents: str,
+        url: str,
+        img_url: str,
+        tag_list: List[str],
+        api_key: str,
     ):
         self.title = title
         self.contents = contents
         self.url = url
         self.tag_list = tag_list
+        self.img_url = img_url
         self.llm = ChatOpenAI(
             model_name=self.MODEL_NAME, temperature=0, api_key=api_key
         )
@@ -111,6 +118,7 @@ class LangProcGpt:
             "en_title": self.title,
             "ja_title": result.ja_title,
             "url": self.url,
+            "img_url": self.img_url,
             "tags": ", ".join([f"#{t}" for t in self.tag_list]),
             "ja_summary": result.ja_summary,
         }

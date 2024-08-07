@@ -1,10 +1,10 @@
 import os
-from typing import List
+from typing import List, Union
 
 import fire
 from dotenv import load_dotenv
 from devtopy import DevTo
-from devtopy.model import PublishedArticleList, PublishedArticle, ErrorResponse
+from devtopy.model import PublishedArticleList, PublishedArticle, ErrorResponse, Article
 
 from dev_to_digest.db import DataBase
 from dev_to_digest.report import DiscordWebhookClient
@@ -45,7 +45,7 @@ def proc(
         if db.url_exists(url):
             continue
         article_id = article.id
-        detail = dt.articles.get_by_id(article_id)
+        detail: Union[ErrorResponse, Article] = dt.articles.get_by_id(article_id)
         if type(detail) is ErrorResponse:
             continue
         title = article.title
@@ -55,6 +55,7 @@ def proc(
             "title": title,
             "contents": contents,
             "url": url,
+            "img_url": detail.social_image,
             "tag_list": tags,
             "api_key": os.getenv("OPENAI_API_KEY"),
         }

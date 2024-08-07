@@ -22,6 +22,7 @@ class DiscordWebhookClient:
         data = {
             "content": "",
             "embeds": [embed],
+            "thumbnail": {"url": proc_data.img_url},
         }
         if self.is_silent:
             data["flags"] = 4096

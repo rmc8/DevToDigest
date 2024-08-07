@@ -6,6 +6,9 @@ from langchain.prompts import PromptTemplate
 from langchain.output_parsers import PydanticOutputParser, OutputFixingParser
 
 
+from .model import ProcessedArticleData
+
+
 class ProcResult(BaseModel):
     ja_title: str = Field(description="Japanese translation of the article title")
     ja_summary: str = Field(description="Japanese translation of the summary")
@@ -102,12 +105,13 @@ class LangProcGpt:
         output = self.llm.invoke(formatted_prompts)
         return self.result_parser.parse(output.content)
 
-    def run(self, summary_sentences: int = 5) -> dict:
+    def run(self, summary_sentences: int = 5) -> ProcessedArticleData:
         result = self.summarize_and_translate(summary_sentences)
-        return {
+        res_dict = {
             "en_title": self.title,
             "ja_title": result.ja_title,
             "url": self.url,
             "tags": ", ".join([f"#{t}" for t in self.tag_list]),
             "ja_summary": result.ja_summary,
         }
+        return ProcessedArticleData(**res_dict)

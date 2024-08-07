@@ -1,5 +1,4 @@
 import os
-import json
 from typing import List
 
 import fire
@@ -8,17 +7,13 @@ from devtopy import DevTo
 from devtopy.model import PublishedArticleList, PublishedArticle, ErrorResponse
 
 from dev_to_digest.db import DataBase
-
+from dev_to_digest.report import DiscordWebhookClient
 from dev_to_digest.lang_processor_gpt import LangProcGpt
 
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
 DOT_ENV_PATH = os.path.join(THIS_DIR, ".env")
-JSON_PATH = os.path.join(THIS_DIR, "config.json")
 
 load_dotenv(dotenv_path=DOT_ENV_PATH)
-
-with open(JSON_PATH, "r") as f:
-    conf = json.load(f)
 
 
 def fil_articles(
@@ -27,7 +22,13 @@ def fil_articles(
     return [a for a in articles.articles if a.positive_reactions_count > threshold]
 
 
-def proc(tag_name: str, webhook_url: str, reaction_threshold: int = 55):
+def proc(
+    tag_name: str,
+    webhook_url: str,
+    reaction_threshold: int = 55,
+    summary_sentences: int = 5,
+    is_silent: bool = True,
+):
     # 8% = 20
     # 5% = 22
     # 2% = 53
@@ -35,6 +36,10 @@ def proc(tag_name: str, webhook_url: str, reaction_threshold: int = 55):
     dt = DevTo(api_key=os.getenv("DEVTO_API_KEY"))
     res = dt.articles.get(page=1, per_page=1000, tag=tag_name.lower())
     articles = fil_articles(res, reaction_threshold)
+    dw = DiscordWebhookClient(
+        webhook_url=webhook_url,
+        is_silent=is_silent,
+    )
     for article in articles:
         url = str(article.url)
         if db.url_exists(url):
@@ -54,9 +59,18 @@ def proc(tag_name: str, webhook_url: str, reaction_threshold: int = 55):
             "api_key": os.getenv("OPENAI_API_KEY"),
         }
         lp = LangProcGpt(**params)
-        data = lp.run()
-        print(data)
-        break
+        data = lp.run(summary_sentences=summary_sentences)
+        err_status = dw.report(data)
+        if err_status:
+            continue
+        db.insert_data(
+            url=data.url,
+            en_title=data.en_title,
+            ja_title=data.ja_title,
+            translated_text=data.ja_summary,
+            tags=data.tags,
+        )
+        exit()
 
 
 def main():

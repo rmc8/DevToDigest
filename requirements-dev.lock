@@ -43,6 +43,7 @@ exceptiongroup==1.2.2
     # via anyio
 fire==0.6.0
     # via dev-to-digest
+flake8==7.1.1
 frozenlist==1.4.1
     # via aiohttp
     # via aiosignal
@@ -81,6 +82,8 @@ langsmith==0.1.98
     # via langchain-core
 marshmallow==3.21.3
     # via dataclasses-json
+mccabe==0.7.0
+    # via flake8
 multidict==6.0.5
     # via aiohttp
     # via yarl
@@ -96,6 +99,8 @@ orjson==3.10.6
 packaging==24.1
     # via langchain-core
     # via marshmallow
+pycodestyle==2.12.1
+    # via flake8
 pydantic==2.8.2
     # via devtopy
     # via langchain
@@ -104,6 +109,8 @@ pydantic==2.8.2
     # via openai
 pydantic-core==2.20.1
     # via pydantic
+pyflakes==3.2.0
+    # via flake8
 python-dotenv==1.0.1
     # via dev-to-digest
 pyyaml==6.0.1

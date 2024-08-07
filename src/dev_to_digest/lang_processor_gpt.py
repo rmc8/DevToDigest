@@ -118,7 +118,7 @@ class LangProcGpt:
             "en_title": self.title,
             "ja_title": result.ja_title,
             "url": self.url,
-            "img_url": self.img_url,
+            "img_url": str(self.img_url),
             "tags": ", ".join([f"#{t}" for t in self.tag_list]),
             "ja_summary": result.ja_summary,
         }

@@ -13,6 +13,7 @@ class DiscordWebhookClient:
             "color": 0x00C0CE,
             "title": proc_data.ja_title,
             "url": proc_data.url,
+            "thumbnail": {"url": proc_data.img_url},
             "fields": [
                 {"name": "EnTitle", "value": proc_data.en_title},
                 {"name": "Tags", "value": proc_data.tags},
@@ -22,7 +23,6 @@ class DiscordWebhookClient:
         data = {
             "content": "",
             "embeds": [embed],
-            "thumbnail": {"url": proc_data.img_url},
         }
         if self.is_silent:
             data["flags"] = 4096

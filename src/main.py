@@ -29,6 +29,7 @@ def proc(
     summary_sentences: int = 5,
     is_silent: bool = True,
 ):
+    # [Info]: percentile of reaction_threshold
     # 8% = 20
     # 5% = 22
     # 2% = 53

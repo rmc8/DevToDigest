@@ -72,7 +72,6 @@ def proc(
             translated_text=data.ja_summary,
             tags=data.tags,
         )
-        exit()
 
 
 def main():
